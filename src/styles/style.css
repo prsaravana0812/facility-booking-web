@@ -1,0 +1,69 @@
+:root {
+  --primary: #13add5;
+  --secondary: #75dd02;
+  --scroll-color: rgba(0, 0, 0, 0.6);
+  --scroll-background: #f9f9f9;
+}
+
+/* fontName:"Mukta" */
+@font-face {
+  font-family: Mukta-Bold;
+  src: url("../assets/mukta/Mukta-Bold.ttf") format("opentype");
+}
+@font-face {
+  font-family: Mukta-ExtraBold;
+  src: url("../assets/mukta/Mukta-ExtraBold.ttf") format("opentype");
+}
+@font-face {
+  font-family: Mukta-ExtraLight;
+  src: url("../assets/mukta/Mukta-Bold.ttf") format("opentype");
+}
+@font-face {
+  font-family: Mukta-Light;
+  src: url("../assets/mukta/Mukta-Light.ttf") format("opentype");
+}
+@font-face {
+  font-family: Mukta-Medium;
+  src: url("../assets/mukta/Mukta-Medium.ttf") format("opentype");
+}
+@font-face {
+  font-family: Mukta-Regular;
+  src: url("../assets/mukta/Mukta-Regular.ttf") format("opentype");
+}
+@font-face {
+  font-family: Mukta-SemiBold;
+  src: url("../assets/mukta/Mukta-SemiBold.ttf") format("opentype");
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  color: #414042 !important;
+  background-color: #f5f5f5 !important;
+  font-family: Mukta-Medium !important;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: var(--scroll-background);
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 3px rgb(197, 197, 197);
+  border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--scroll-color);
+  border-radius: 5px;
+}
+
+@import "./calendar.css";
+@import "./form.css";

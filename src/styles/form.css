@@ -1,0 +1,25 @@
+.MuiDrawer-paperAnchorRight {
+  width: 40vw !important;
+  padding: 2rem !important;
+}
+
+.stack-control {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6875rem;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  position: fixed;
+  bottom: 0;
+  padding: 1rem;
+}
+
+@media screen and (max-width: 899px) {
+  .MuiDrawer-paperAnchorRight {
+    width: 100vw !important;
+    padding: 1rem !important;
+  }
+}

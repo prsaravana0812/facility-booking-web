@@ -1,0 +1,27 @@
+.calendar_default_corner_inner,
+.calendar_default_cornerright_inner,
+.calendar_default_colheader_inner,
+.calendar_default_rowheader_inner {
+  background: #13add5 !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+  font-family: Mukta-Bold !important;
+}
+
+.navigator_default_titleleft,
+.navigator_default_titleright,
+.navigator_default_title,
+.navigator_default_weekend {
+  background: #13add5 !important;
+  color: #ffffff !important;
+  font-family: Mukta-Bold !important;
+}
+
+.navigator_default_todaybox {
+  border: 1px solid #75dd02 !important;
+}
+
+.navigator_default_select {
+  background-color: #75dd02 !important;
+  color: #ffffff !important;
+}
