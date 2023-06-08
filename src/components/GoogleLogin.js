@@ -66,16 +66,16 @@ const GoogleLogin = () => {
           </Box>
         </Box>
       ) : (
-        <Box
-          sx={{
-            display: "flex",
-            padding: "0 1.5rem",
-            cursor: "pointer",
-            color: "blue",
-          }}
-          onClick={login}
-        >
-          Sign in to Google
+        <Box sx={{ display: "flex", padding: "0 1.5rem" }}>
+          <Box
+            sx={{
+              cursor: "pointer",
+              color: "blue",
+            }}
+            onClick={login}
+          >
+            Sign in to Google
+          </Box>
         </Box>
       )}
     </>
