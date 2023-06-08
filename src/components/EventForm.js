@@ -37,6 +37,8 @@ const styles = {
   },
 };
 
+const profileKey = "google";
+
 const EventForm = ({
   type,
   defaultFormValues,
@@ -48,6 +50,7 @@ const EventForm = ({
     formValues,
     formErrors,
     isValidated,
+    setFormValues,
     handleChange,
     handleTimeChange,
     handleValidation,
@@ -57,8 +60,20 @@ const EventForm = ({
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
+    setFormValues({ person_name: getGoogleProfileName() });
+  }, []);
+
+  useEffect(() => {
     handleValidation();
   }, [formValues, formErrors]);
+
+  const getGoogleProfileName = () => {
+    let localStorageValue = localStorage.getItem(profileKey) || null;
+    let googleProfile =
+      localStorageValue !== null ? JSON.parse(localStorageValue) : {};
+
+    return googleProfile?.name || "";
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
