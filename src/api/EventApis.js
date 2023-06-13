@@ -4,7 +4,9 @@ import _ from "lodash";
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const getRooms = async () => {
-  let response = await axios.get(`${API_BASE_URL}/rooms`);
+  const token = localStorage.getItem("token") || null;
+  const headers = { headers: { Authorization: token } };
+  let response = await axios.get(`${API_BASE_URL}/rooms`, headers);
   let apiResponse = response.data?.data;
   let resultResponse = [];
 
@@ -21,8 +23,11 @@ const getRooms = async () => {
 };
 
 const getEvents = async (calendarDate) => {
+  const token = localStorage.getItem("token") || null;
+  const headers = { headers: { Authorization: token } };
   let response = await axios.get(
-    `${API_BASE_URL}/events?calendar_date=${calendarDate}`
+    `${API_BASE_URL}/events?calendar_date=${calendarDate}`,
+    headers
   );
   let apiResponse = response.data?.data;
   let resultResponse = [];
@@ -37,22 +42,30 @@ const getEvents = async (calendarDate) => {
 };
 
 const getEvent = async (event_id) => {
-  let response = await axios.get(`${API_BASE_URL}/events/${event_id}`);
+  const token = localStorage.getItem("token") || null;
+  const headers = { headers: { Authorization: token } };
+  let response = await axios.get(`${API_BASE_URL}/events/${event_id}`, headers);
   let apiResponse = response.data?.data;
 
   return formatEventData(apiResponse);
 };
 
 const createEvent = (event_data) => {
-  return axios.post(`${API_BASE_URL}/events`, event_data);
+  const token = localStorage.getItem("token") || null;
+  const headers = { headers: { Authorization: token } };
+  return axios.post(`${API_BASE_URL}/events`, event_data, headers);
 };
 
 const updateEvent = (event_id, event_data) => {
-  return axios.put(`${API_BASE_URL}/events/${event_id}`, event_data);
+  const token = localStorage.getItem("token") || null;
+  const headers = { headers: { Authorization: token } };
+  return axios.put(`${API_BASE_URL}/events/${event_id}`, event_data, headers);
 };
 
 const deleteEvent = (event_id) => {
-  return axios.delete(`${API_BASE_URL}/events/${event_id}`);
+  const token = localStorage.getItem("token") || null;
+  const headers = { headers: { Authorization: token } };
+  return axios.delete(`${API_BASE_URL}/events/${event_id}`, headers);
 };
 
 const formatEventData = (event) => {

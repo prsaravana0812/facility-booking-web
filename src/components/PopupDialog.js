@@ -14,7 +14,7 @@ import { toast } from "react-hot-toast";
 
 import EventApis from "../api/EventApis";
 
-const DeleteDialog = ({
+const PopupDialog = ({
   dialogOpen,
   message,
   event_id,
@@ -84,4 +84,4 @@ const DeleteDialog = ({
   );
 };
 
-export default DeleteDialog;
+export default PopupDialog;

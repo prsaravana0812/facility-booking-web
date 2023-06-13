@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { Navigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import { Box, SwipeableDrawer } from "@mui/material";
 import {
   DayPilotCalendar,
@@ -7,7 +9,7 @@ import {
 import dayjs from "dayjs";
 
 import EventForm from "./EventForm";
-import DeleteDialog from "./DeleteDialog";
+import PopupDialog from "./PopupDialog";
 
 import EventApis from "../api/EventApis";
 
@@ -28,6 +30,7 @@ class Calendar extends Component {
     this.datePickerRef = React.createRef();
 
     this.state = {
+      isAuthenticated: true,
       startDate: new Date(),
       columns: [],
       events: [],
@@ -60,24 +63,42 @@ class Calendar extends Component {
     return this.datePickerRef.current.control;
   }
 
-  _loadColumnData = async () => {
-    let columnData = await EventApis.getRooms();
-
-    this._stateUpdate({
-      columns: columnData,
-    });
+  _loadColumnData = () => {
+    EventApis.getRooms()
+      .then((columnData) => {
+        this._stateUpdate({
+          isAuthenticated: true,
+          columns: columnData,
+        });
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          this._stateUpdate({ isAuthenticated: false });
+          localStorage.setItem("token", null);
+        }
+      });
   };
 
-  _loadCalendarData = async (calendarDate) => {
+  _loadCalendarData = (calendarDate) => {
     let formatedDate = dayjs(calendarDate).format("DD/MM/YYYY");
-    let eventData = await EventApis.getEvents(formatedDate);
+    EventApis.getEvents(formatedDate)
+      .then((eventData) => {
+        this._stateUpdate({
+          isAuthenticated: true,
+          events: eventData,
+          formOpen: false,
+          popupOpen: false,
+          deleteEventId: null,
+        });
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          this._stateUpdate({ isAuthenticated: false });
+          localStorage.setItem("token", null);
+        }
 
-    this._stateUpdate({
-      events: eventData,
-      formOpen: false,
-      popupOpen: false,
-      deleteEventId: null,
-    });
+        toast.error(err.response.data.error);
+      });
   };
 
   _updateCalendarData = (eventData) => {
@@ -209,64 +230,70 @@ class Calendar extends Component {
   render() {
     return (
       <>
-        <Box sx={{ width: "100vw", display: { xs: "block", md: "flex" } }}>
-          <Box sx={{ width: { xs: "100vw", md: "20vw" }, padding: "1rem" }}>
-            <Box style={styles.contentCenter}>
-              <DayPilotNavigator
-                selectMode={"Day"}
-                showMonths={1}
-                skipMonths={1}
-                onTimeRangeSelect={(args) => this._onTimeRangeSelect(args)}
-                ref={this.datePickerRef}
-              />
-            </Box>
-          </Box>
-          <Box sx={{ width: { xs: "100vw", md: "80vw" }, padding: "1rem" }}>
-            <Box style={styles.contentCenter}>
-              <DayPilotCalendar
-                viewType={"Resources"}
-                timeRangeSelectedHandling={"Enabled"}
-                eventDeleteHandling={"Update"}
-                allowEventOverlap={false}
-                startDate={this.state.startDate}
-                columns={this.state.columns}
-                events={this.state.events}
-                onTimeRangeSelected={(args) => this._onTimeRangeSelected(args)}
-                onEventClick={(args) => this._onEventClick(args)}
-                onEventMove={(args) => args.preventDefault()}
-                onEventMoved={(args) => this._onEventMoved(args)}
-                onEventDelete={(args) => this._onEventDelete(args)}
-                ref={this.calendarRef}
-              />
-              {this.state.popupOpen && (
-                <DeleteDialog
-                  dialogOpen={this.state.popupOpen}
-                  message={"Are you sure you want to delete this event?"}
-                  event_id={this.state.deleteEventId}
-                  handleConfirm={() => this._updateCalendarData({})}
-                  handleClose={this._closeDialog}
+        {this.state.isAuthenticated ? (
+          <Box sx={{ width: "100vw", display: { xs: "block", md: "flex" } }}>
+            <Box sx={{ width: { xs: "100vw", md: "20vw" }, padding: "1rem" }}>
+              <Box style={styles.contentCenter}>
+                <DayPilotNavigator
+                  selectMode={"Day"}
+                  showMonths={1}
+                  skipMonths={1}
+                  onTimeRangeSelect={(args) => this._onTimeRangeSelect(args)}
+                  ref={this.datePickerRef}
                 />
-              )}
-              <SwipeableDrawer
-                anchor={"right"}
-                open={this.state.formOpen}
-                onOpen={() => this._toggleDrawer(true)}
-                onClose={() => this._toggleDrawer(false)}
-                sx={{ width: { xs: "100vw", md: "40vw" } }}
-              >
-                {this.state.formOpen && (
-                  <EventForm
-                    type={this.state.actionType}
-                    resources={this.state.columns}
-                    defaultFormValues={this.state.formValues}
-                    refetchEvents={(event) => this._updateCalendarData(event)}
-                    closeDrawer={this._closeDrawer}
+              </Box>
+            </Box>
+            <Box sx={{ width: { xs: "100vw", md: "80vw" }, padding: "1rem" }}>
+              <Box style={styles.contentCenter}>
+                <DayPilotCalendar
+                  viewType={"Resources"}
+                  timeRangeSelectedHandling={"Enabled"}
+                  eventDeleteHandling={"Update"}
+                  allowEventOverlap={false}
+                  startDate={this.state.startDate}
+                  columns={this.state.columns}
+                  events={this.state.events}
+                  onTimeRangeSelected={(args) =>
+                    this._onTimeRangeSelected(args)
+                  }
+                  onEventClick={(args) => this._onEventClick(args)}
+                  onEventMove={(args) => args.preventDefault()}
+                  onEventMoved={(args) => this._onEventMoved(args)}
+                  onEventDelete={(args) => this._onEventDelete(args)}
+                  ref={this.calendarRef}
+                />
+                {this.state.popupOpen && (
+                  <PopupDialog
+                    dialogOpen={this.state.popupOpen}
+                    message={"Are you sure you want to delete this event?"}
+                    event_id={this.state.deleteEventId}
+                    handleConfirm={() => this._updateCalendarData({})}
+                    handleClose={this._closeDialog}
                   />
                 )}
-              </SwipeableDrawer>
+                <SwipeableDrawer
+                  anchor={"right"}
+                  open={this.state.formOpen}
+                  onOpen={() => this._toggleDrawer(true)}
+                  onClose={() => this._toggleDrawer(false)}
+                  sx={{ width: { xs: "100vw", md: "40vw" } }}
+                >
+                  {this.state.formOpen && (
+                    <EventForm
+                      type={this.state.actionType}
+                      resources={this.state.columns}
+                      defaultFormValues={this.state.formValues}
+                      refetchEvents={(event) => this._updateCalendarData(event)}
+                      closeDrawer={this._closeDrawer}
+                    />
+                  )}
+                </SwipeableDrawer>
+              </Box>
             </Box>
           </Box>
-        </Box>
+        ) : (
+          <Navigate to={"/login"} />
+        )}
       </>
     );
   }

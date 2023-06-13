@@ -60,7 +60,7 @@ const EventForm = ({
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    setFormValues({ person_name: getGoogleProfileName() });
+    setFormValues({ ...formValues, person_name: getGoogleProfileName() });
   }, []);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const EventForm = ({
     let googleProfile =
       localStorageValue !== null ? JSON.parse(localStorageValue) : {};
 
-    return googleProfile?.name || "";
+    return googleProfile?.display_name || "";
   };
 
   const handleSubmit = (event) => {
@@ -203,7 +203,7 @@ const EventForm = ({
             value={formValues.person_name}
             error={formErrors.person_name ? true : false}
             helperText={formErrors.person_name ?? ""}
-            InputProps={{ readOnly: isLoading }}
+            InputProps={{ readOnly: true }}
             fullWidth
             required
           />
